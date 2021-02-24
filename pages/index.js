@@ -1,6 +1,13 @@
+import React, { useState } from 'react'
+import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import Image from 'next/image'
+import { useMeasure } from "react-use";
 import { Box, Heading, Text, keyframes } from '@chakra-ui/react'
+
+const Stage = dynamic(() => import('../components/Curtain'), {
+  ssr: false
+});
 
 const menuAnimation = keyframes`
   from {
@@ -13,8 +20,9 @@ const menuAnimation = keyframes`
   }
 `;
 
-const MenuItem = ({ children }) => (
+const MenuItem = ({ children, onHover }) => (
   <Text
+    onMouseEnter={onHover}
     position="relative"
     cursor="pointer"
     transition="all cubic-bezier(0, 0.2, 0.8, 1) .3s"
@@ -46,6 +54,9 @@ const MenuItem = ({ children }) => (
 )
 
 export default function Home() {
+  const [ref, { x, y, width, height, top, right, bottom, left }] = useMeasure()
+  const [currentIndex, setCurrentIndex] = useState(0)
+
   return (
     <div>
       <Head>
@@ -57,6 +68,7 @@ export default function Home() {
         <Box
           position="relative"
           zIndex={2}
+          display="inline-block"
           pt="12.5rem"
           pl="10rem"
           fontWeight="900"
@@ -67,14 +79,15 @@ export default function Home() {
             <Heading fontSize="inherit" fontWeight="inherit" lineHeight="inherit">The Journey</Heading>
           </Box>
           <Box pt="4rem" fontSize="3rem" animation={`.8s cubic-bezier(0, 0.2, 0.8, 1) 1s 1 ${menuAnimation} both`}>
-            <MenuItem>St Mary St Vincent</MenuItem>
-            <MenuItem>Cleveland Cavaliers</MenuItem>
-            <MenuItem>Miami Heat</MenuItem>
-            <MenuItem>Los Angeles Lakers</MenuItem>
-            <MenuItem>Olympics</MenuItem>
+            <MenuItem onHover={() => setCurrentIndex(1)}>St Mary St Vincent</MenuItem>
+            <MenuItem onHover={() => setCurrentIndex(2)}>Cleveland Cavaliers</MenuItem>
+            <MenuItem onHover={() => setCurrentIndex(3)}>Miami Heat</MenuItem>
+            <MenuItem onHover={() => setCurrentIndex(4)}>Los Angeles Lakers</MenuItem>
+            <MenuItem onHover={() => setCurrentIndex(5)}>Olympics</MenuItem>
           </Box>
         </Box>
         <Box
+          ref={ref}
           position="absolute"
           zIndex={1}
           right={0}
@@ -84,8 +97,16 @@ export default function Home() {
           py="4%"
           pl="20%"
         >
-          <Box position="relative" width="100%" height="100%">
-            <Image src="/images/cover.jpg" layout="fill" objectFit="cover" />
+          <Box
+            position="relative"
+            width="100%"
+            height="100%"
+          >
+            <Stage
+              width={width}
+              height={height}
+              currentIndex={currentIndex}
+            />
           </Box>
         </Box>
       </Box>
