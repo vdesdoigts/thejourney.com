@@ -19,7 +19,7 @@ const styles = {
 }
 
 const fonts = {
-  body: "Kanit, sans-serif",
+  body: "Cormorant, sans-serif",
   heading: "Kanit, serif",
   mono: "Menlo, monospace",
 }
