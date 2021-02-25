@@ -8,7 +8,7 @@ const styles = {
       color: 'white',
     },
     "html": {
-      overflowY: 'scroll',
+      overflowY: 'auto',
       fontSize: '62.5%',
       fontSize: 'calc(1em * 0.625)',
       wordBreak: 'break-word',

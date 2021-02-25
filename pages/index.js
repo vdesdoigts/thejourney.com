@@ -43,7 +43,7 @@ export default function Home() {
   const [currentText, setCurrentText] = useState(1)
   const isChanging = useRef(false)
   const lastWheelPosition = useRef(0)
-  const total = 5
+  const total = 3
   const [open, set] = useState(true)
 
   useEffect(() => {
@@ -100,14 +100,14 @@ export default function Home() {
           direction="column"
           alignItems="center"
           justifyContent="center"
+          pr="20rem"
         >
-          <Box
-            textAlign="right"
-          >
-            <Heading fontSize="7rem" fontWeight="800" lineHeight=".75" textTransform="uppercase" letterSpacing={2}>LeBron <br/> James</Heading>
+          <Box>
+            <Text as="span" fontSize="3rem" fontWeight="700" fontStyle="italic" mr={4}>the journey of</Text>
+            <Heading textAlign="right" fontSize="7rem" fontWeight="800" lineHeight=".75" textTransform="uppercase" letterSpacing={2}>LeBron <br/> James</Heading>
           </Box>
           <Flex direction="row" justifyContent="center">
-            <Text width="9rem" ml="47.6rem" fontSize="3rem" fontWeight="700" fontStyle="italic" mr={4}>with the</Text>
+            <Text width="9rem" ml="47.6rem" fontSize="3rem" fontWeight="700" fontStyle="italic" lineHeight="1" mr={4}>with the</Text>
 
             <Heading position="relative" width="50rem" fontSize="7rem" fontWeight="800" lineHeight=".75" textTransform="uppercase" letterSpacing={2}>
               <Trail open={open}>
@@ -141,7 +141,7 @@ export default function Home() {
             right={0}
             width="100vw"
             height="100vh"
-            backgroundColor="rgba(0, 0, 0, .44)"
+            backgroundColor="rgba(0, 0, 0, .54)"
           />
           <Box
             position="relative"

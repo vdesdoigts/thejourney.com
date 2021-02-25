@@ -93,11 +93,11 @@ function Slideshow({ currentIndex, isChanging, onChanging }) {
           data-sampler="displacement"
           alt=""
         />
-        <img src="/images/los-angeles-lakers.jpg" alt="" />
-        <img src="/images/miami-heat.jpg" alt="" />
-        <img src="/images/cleveland-cavaliers.jpg" alt="" />
-        <img src="https://unsplash.it/1920/1080?random=4" alt="" />
-        <img src="https://unsplash.it/1920/1080?random=5" alt="" />
+        <img src="/images/los-angeles-lakers-nb-crop.jpg" alt="" />
+        <img src="/images/miami-heat-nb-crop.jpg" alt="" />
+        <img src="/images/cleveland-cavaliers-nb.jpg" alt="" />
+        {/* <img src="https://unsplash.it/1920/1080?random=4" alt="" />
+        <img src="https://unsplash.it/1920/1080?random=5" alt="" /> */}
         {/* <img src="https://unsplash.it/1920/1080?random=6" alt="" /> */}
         {/* <img src="https://unsplash.it/1920/1080?random=7" alt="" /> */}
       </div>
