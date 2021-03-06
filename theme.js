@@ -3,12 +3,14 @@ import { extendTheme } from '@chakra-ui/react'
 const styles = {
   global: (props) => ({
     "html, body": {
-      overflowX: 'hidden',
+      height: '100%',
+      width: '100%',
+      overflow: 'hidden',
       backgroundColor: '#222222',
       color: 'white',
     },
     "html": {
-      overflowY: 'auto',
+      overflow: 'hidden',
       fontSize: '62.5%',
       fontSize: 'calc(1em * 0.625)',
       wordBreak: 'break-word',

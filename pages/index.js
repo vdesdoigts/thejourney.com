@@ -1,10 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useTrail, a } from 'react-spring'
+import { useMeasure, useMouseWheel } from 'react-use'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
-import Image from 'next/image'
-import { useMeasure, useMouseWheel } from 'react-use'
 import { Box, Flex, Heading, Text, keyframes } from '@chakra-ui/react'
-import { useTrail, a } from 'react-spring'
+import { CursorProvider } from '../contexts/Cursor'
+import Cursor from '../components/Cursor'
+
+const fast = { mass: 4, tension: 400, friction: 40 }
+
+const scollAnim = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+`
 
 const Stage = dynamic(() => import('../components/Curtain'), {
   ssr: false
@@ -14,7 +27,6 @@ function Trail({ open, children, ...props }) {
   const items = React.Children.toArray(children)
   const trail = useTrail(items.length, {
     config: { mass: 5, tension: 2000, friction: 200 },
-    // opacity: open ? 1 : 0,
     x: open ? 0 : 20,
     height: open ? 54 : 0,
     from: { opacity: 1, x: 20, height: 0 },
@@ -37,6 +49,8 @@ function Trail({ open, children, ...props }) {
 }
 
 export default function Home() {
+  const [trail, setTrail] = useTrail(1, () => ({ xy: [0, 0], config: () => fast }))
+  const [hideCursor, setHideCursor] = useState(true)
   const [ref, { width, height }] = useMeasure()
   const mouseWheel = useMouseWheel()
   const [currentIndex, setCurrentIndex] = useState(1)
@@ -45,6 +59,15 @@ export default function Home() {
   const lastWheelPosition = useRef(0)
   const total = 3
   const [open, set] = useState(true)
+  const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    document.fonts.ready.then(function () {
+      setTimeout(() => {
+        setIsReady(true)
+      }, 1000)
+    })
+  }, [])
 
   useEffect(() => {
     if (!isChanging.current) {
@@ -82,7 +105,7 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <CursorProvider>
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
@@ -90,9 +113,47 @@ export default function Home() {
 
       <Box
         as="main"
+        cursor="pointer"
         position="relative"
         minHeight="100vh"
+        onMouseMove={(e) => {
+          if (hideCursor) {
+            setHideCursor(false)
+          }
+          setTrail({ xy: [e.clientX, e.clientY] })
+        }}
       >
+        {trail.map((props, index) => (
+          <Cursor key={index} xy={props.xy} opacity={hideCursor || !isReady ? 0 : 0.6} />
+        ))}
+        <Flex
+          opacity=".6"
+          position="absolute"
+          zIndex={99}
+          bottom="1rem"
+          width="100%"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text fontSize="1.8rem" fontWeight="700" fontStyle="italic" mr={4}>scroll</Text>
+          <Box
+            position="relative"
+            width=".4rem"
+            height="3rem"
+          >
+            <Box
+              content=" "
+              position="absolute"
+              width=".4rem"
+              height=".4rem"
+              background="#fff"
+              top=".3rem"
+              borderRadius=".4rem"
+              animation={`${scollAnim} 1.5s linear infinite`}
+            />
+          </Box>
+          <Text fontSize="1.8rem" fontWeight="700" fontStyle="italic" ml={4}>down</Text>
+        </Flex>
         <Flex
           position="relative"
           zIndex={2}
@@ -101,6 +162,9 @@ export default function Home() {
           alignItems="center"
           justifyContent="center"
           pr="20rem"
+          opacity={isReady ? 1 : 0}
+          transform={isReady ? 'translateY(0)' : 'translateY(-1rem)'}
+          transition="all ease .5s"
         >
           <Box>
             <Text as="span" fontSize="3rem" fontWeight="700" fontStyle="italic" mr={4}>the journey of</Text>
@@ -108,7 +172,6 @@ export default function Home() {
           </Box>
           <Flex direction="row" justifyContent="center">
             <Text width="9rem" ml="47.6rem" fontSize="3rem" fontWeight="700" fontStyle="italic" lineHeight="1" mr={4}>with the</Text>
-
             <Heading position="relative" width="50rem" fontSize="7rem" fontWeight="800" lineHeight=".75" textTransform="uppercase" letterSpacing={2}>
               <Trail open={open}>
                 {currentText === 1 && <span>Los Angeles</span>}
@@ -118,10 +181,6 @@ export default function Home() {
                 {currentText === 3 && <span>Cleveland</span>}
                 {currentText === 3 && <span>Cavaliers</span>}
               </Trail>
-                {/* <Span current={currentIndex === 1} prev={currentIndex === 2}>Los Angeles</Span> <br/> <Span current={currentIndex === 1} prev={currentIndex === 2}>Lakers</Span>
-                <Span current={currentIndex === 2} prev={currentIndex === 3}>Miami</Span> <br/> <Span current={currentIndex === 2} prev={currentIndex === 3}>Heat</Span>
-                <Span current={currentIndex === 3} prev={currentIndex === 4}>Cleveland</Span> <br/> <Span current={currentIndex === 3} prev={currentIndex === 4}>Cavaliers</Span>
-                <Span current={currentIndex === 4}>St Mary</Span> <br/> <Span current={currentIndex === 4}>St Vincent</Span> */}
             </Heading>
           </Flex>
         </Flex>
@@ -158,6 +217,6 @@ export default function Home() {
           </Box>
         </Box>
       </Box>
-    </div>
+    </CursorProvider>
   )
 }
