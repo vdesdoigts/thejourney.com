@@ -73,3 +73,7 @@ a {
 .trails-text > div {
   overflow: hidden;
 }
+
+.swiper-container.swiper-container {
+  padding-left: 16rem;
+}

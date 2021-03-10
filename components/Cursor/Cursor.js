@@ -1,8 +1,8 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import styled from '@emotion/styled'
 import { animated } from 'react-spring'
 import { Text } from '@chakra-ui/react'
-import { useCursorState, CARD_TYPE, DEFAULT_TYPE } from '../contexts/Cursor'
+import { useCursorState, CARD_TYPE } from '../../contexts/Cursor'
 
 const trans = (x, y) => `translate3d(${x}px, ${y}px, 0) translate3d(-50%, -50%, 0)`
 

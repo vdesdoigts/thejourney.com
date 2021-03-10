@@ -1,6 +1,6 @@
-import React from "react";
-import gsap from "gsap";
-import { Curtains, useCurtains } from "react-curtains";
+import React from 'react'
+import gsap from 'gsap'
+import { Curtains, useCurtains } from 'react-curtains'
 import Slideshow from './Slideshow'
 
 function App(props) {

@@ -3,21 +3,13 @@ import { useTrail, a } from 'react-spring'
 import { useMeasure, useMouseWheel } from 'react-use'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
-import { Box, Flex, Heading, Text, keyframes } from '@chakra-ui/react'
+import { Box, Flex, Heading, Text } from '@chakra-ui/react'
+import { useAnimation } from 'framer-motion'
 import { CursorProvider } from '../contexts/Cursor'
 import Cursor from '../components/Cursor'
-
-const fast = { mass: 4, tension: 400, friction: 40 }
-
-const scollAnim = keyframes`
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-    transform: translateY(26px);
-  }
-`
+import LinkOverlay from '../components/LinkOverlay'
+import Headline from '../components/Headline'
+import ScrollDown from '../components/ScrollDown'
 
 const Stage = dynamic(() => import('../components/Curtain'), {
   ssr: false
@@ -49,23 +41,23 @@ function Trail({ open, children, ...props }) {
 }
 
 export default function Home() {
-  const [trail, setTrail] = useTrail(1, () => ({ xy: [0, 0], config: () => fast }))
-  const [hideCursor, setHideCursor] = useState(true)
+  const controls = useAnimation()
+  const [trail, setTrail] = useTrail(1, () => ({ xy: [0, 0], config: () => ({ mass: 4, tension: 400, friction: 40 }) }))
   const [ref, { width, height }] = useMeasure()
   const mouseWheel = useMouseWheel()
+
+  const [hideCursor, setHideCursor] = useState(true)
   const [currentIndex, setCurrentIndex] = useState(1)
   const [currentText, setCurrentText] = useState(1)
+  const [open, set] = useState(true)
+
   const isChanging = useRef(false)
   const lastWheelPosition = useRef(0)
   const total = 3
-  const [open, set] = useState(true)
-  const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
     document.fonts.ready.then(function () {
-      setTimeout(() => {
-        setIsReady(true)
-      }, 1000)
+      controls.start("visible")
     })
   }, [])
 
@@ -107,13 +99,11 @@ export default function Home() {
   return (
     <CursorProvider>
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>The Journey of LeBron James</title>
       </Head>
 
       <Box
-        as="main"
-        cursor="pointer"
+        display="block"
         position="relative"
         minHeight="100vh"
         onMouseMove={(e) => {
@@ -124,66 +114,14 @@ export default function Home() {
         }}
       >
         {trail.map((props, index) => (
-          <Cursor key={index} xy={props.xy} opacity={hideCursor || !isReady ? 0 : 0.6} />
+          <Cursor key={index} xy={props.xy} opacity={hideCursor ? 0 : 0.6} />
         ))}
-        <Flex
-          opacity=".6"
-          position="absolute"
-          zIndex={99}
-          bottom="1rem"
-          width="100%"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Text fontSize="1.8rem" fontWeight="700" fontStyle="italic" mr={4}>scroll</Text>
-          <Box
-            position="relative"
-            width=".4rem"
-            height="3rem"
-          >
-            <Box
-              content=" "
-              position="absolute"
-              width=".4rem"
-              height=".4rem"
-              background="#fff"
-              top=".3rem"
-              borderRadius=".4rem"
-              animation={`${scollAnim} 1.5s linear infinite`}
-            />
-          </Box>
-          <Text fontSize="1.8rem" fontWeight="700" fontStyle="italic" ml={4}>down</Text>
-        </Flex>
-        <Flex
-          position="relative"
-          zIndex={2}
-          minHeight="100vh"
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-          pr="20rem"
-          opacity={isReady ? 1 : 0}
-          transform={isReady ? 'translateY(0)' : 'translateY(-1rem)'}
-          transition="all ease .5s"
-        >
-          <Box>
-            <Text as="span" fontSize="3rem" fontWeight="700" fontStyle="italic" mr={4}>the journey of</Text>
-            <Heading textAlign="right" fontSize="7rem" fontWeight="800" lineHeight=".75" textTransform="uppercase" letterSpacing={2}>LeBron <br/> James</Heading>
-          </Box>
-          <Flex direction="row" justifyContent="center">
-            <Text width="9rem" ml="47.6rem" fontSize="3rem" fontWeight="700" fontStyle="italic" lineHeight="1" mr={4}>with the</Text>
-            <Heading position="relative" width="50rem" fontSize="7rem" fontWeight="800" lineHeight=".75" textTransform="uppercase" letterSpacing={2}>
-              <Trail open={open}>
-                {currentText === 1 && <span>Los Angeles</span>}
-                {currentText === 1 && <span>Lakers</span>}
-                {currentText === 2 && <span>Miami</span>}
-                {currentText === 2 && <span>Heat</span>}
-                {currentText === 3 && <span>Cleveland</span>}
-                {currentText === 3 && <span>Cavaliers</span>}
-              </Trail>
-            </Heading>
-          </Flex>
-        </Flex>
+
+        <LinkOverlay href="/showcase" />
+        <ScrollDown />
+
+        <Headline open={open} currentText={currentText} />
+
         <Box
           ref={ref}
           position="absolute"
