@@ -16,7 +16,7 @@ const styles = {
       wordBreak: 'break-word',
       '-webkit-font-smoothing': 'antialiased',
       '-moz-osx-font-smoothing': 'grayscale',
-    }
+    },
   }),
 }
 

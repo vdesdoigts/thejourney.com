@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useTrail, a } from 'react-spring'
 import { useMeasure, useMouseWheel } from 'react-use'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
-import { Box, Flex, Heading, Text } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import { useAnimation } from 'framer-motion'
 import { CursorProvider } from '../contexts/Cursor'
 import Cursor from '../components/Cursor'
@@ -11,44 +12,49 @@ import LinkOverlay from '../components/LinkOverlay'
 import Headline from '../components/Headline'
 import ScrollDown from '../components/ScrollDown'
 
+const routes = [
+  '/los-angeles-lakers',
+  '/miami-heat',
+  '/cleveland-cavaliers',
+]
+
+const hashes = [
+  '#los-angeles-lakers',
+  '#miami-heat',
+  '#cleveland-cavaliers',
+]
+
 const Stage = dynamic(() => import('../components/Curtain'), {
   ssr: false
 })
 
-function Trail({ open, children, ...props }) {
-  const items = React.Children.toArray(children)
-  const trail = useTrail(items.length, {
-    config: { mass: 5, tension: 2000, friction: 200 },
-    x: open ? 0 : 20,
-    height: open ? 54 : 0,
-    from: { opacity: 1, x: 20, height: 0 },
-  })
-
-  return (
-    <div className="trails-main" {...props}>
-      <div>
-        {trail.map(({ x, height, ...rest }, index) => (
-          <a.div
-            key={items[index]}
-            className="trails-text"
-            style={{ ...rest, transform: x.interpolate((x) => `translate3d(0,${x}px,0)`) }}>
-            <a.div style={{ height }}>{items[index]}</a.div>
-          </a.div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-export default function Home() {
+const Home = (props) => {
+  console.log('hash: ', props)
+  const router = useRouter()
+  console.log('router: ', router)
+  console.log('router: ', router.asPath)
   const controls = useAnimation()
   const [trail, setTrail] = useTrail(1, () => ({ xy: [0, 0], config: () => ({ mass: 4, tension: 400, friction: 40 }) }))
   const [ref, { width, height }] = useMeasure()
   const mouseWheel = useMouseWheel()
 
   const [hideCursor, setHideCursor] = useState(true)
-  const [currentIndex, setCurrentIndex] = useState(1)
-  const [currentText, setCurrentText] = useState(1)
+  const [currentIndex, setCurrentIndex] = useState(router.asPath === `/${hashes[0]}`
+    ? 1
+    : router.asPath === `/${hashes[1]}`
+      ? 2
+      : router.asPath === `/${hashes[2]}`
+        ? 3
+        : 1 
+  )
+  const [currentText, setCurrentText] = useState(router.asPath === `/${hashes[0]}`
+    ? 1
+    : router.asPath === `/${hashes[1]}`
+      ? 2
+      : router.asPath === `/${hashes[2]}`
+        ? 3
+        : 1 
+  )
   const [open, set] = useState(true)
 
   const isChanging = useRef(false)
@@ -57,7 +63,7 @@ export default function Home() {
 
   useEffect(() => {
     document.fonts.ready.then(function () {
-      controls.start("visible")
+      controls.start('visible')
     })
   }, [])
 
@@ -77,10 +83,12 @@ export default function Home() {
         setCurrentIndex(currentIndex + 1)
         set((state) => !state)
         setTimeout(() => {
+          router.replace(`/${hashes[currentIndex]}`)
           setCurrentText(currentIndex + 1)
           set((state) => !state)
         }, 500)
       } else if (scrollDown === false && currentIndex !== 1) {
+        router.replace(`/${hashes[currentIndex - 2]}`)
         setCurrentIndex(currentIndex - 1)
         set((state) => !state)
         setTimeout(() => {
@@ -94,6 +102,16 @@ export default function Home() {
 
   const onChanging = (value) => {
     isChanging.current = value
+  }
+
+  const getCurrentIndexByHash = () => {
+    const index = hashes.findIndex((hash) => hash === window.location.hash)
+
+    if (index !== -1) {
+      return index + 1
+    }
+
+    return 1
   }
 
   return (
@@ -117,7 +135,7 @@ export default function Home() {
           <Cursor key={index} xy={props.xy} opacity={hideCursor ? 0 : 0.6} />
         ))}
 
-        <LinkOverlay href="/showcase" />
+        <LinkOverlay href={routes[currentIndex - 1]} />
         <ScrollDown />
 
         <Headline open={open} currentText={currentText} />
@@ -158,3 +176,5 @@ export default function Home() {
     </CursorProvider>
   )
 }
+
+export default Home

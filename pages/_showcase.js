@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { Box, Flex, Heading, Text, keyframes } from '@chakra-ui/react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import MotionBox from '../components/MotionBox'
@@ -18,14 +18,15 @@ const arrowAnim = keyframes`
   }
 `
 
-const Showcase = () => {
-  return (
-    <>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+const Showcase = ({
+  date,
+  team,
+  medias,
+  hash,
+}) => {
+  const router = useRouter()
 
+  return (
       <Box
         as="main"
         position="relative"
@@ -67,14 +68,15 @@ const Showcase = () => {
                 grabCursor
                 freeMode
               >
-                <SwiperSlide><VideoThumb /></SwiperSlide>
-                <SwiperSlide><VideoThumb /></SwiperSlide>
-                <SwiperSlide><VideoThumb /></SwiperSlide>
-                <SwiperSlide><VideoThumb /></SwiperSlide>
+                {medias?.map(({ cover }, index) => (
+                  <SwiperSlide key={index}>
+                    <VideoThumb thumbnail={cover} />
+                  </SwiperSlide>
+                ))}
               </Swiper>
             </Box>
             <Box pt="2rem" pl="16rem">
-              <Flex fontSize="1.4rem">
+              <Flex fontSize="1.4rem" onClick={() => router.push({ pathname: '/', hash })}>
                 <Text animation={`${arrowAnim} 2s linear infinite`}>←</Text>
                 <Text
                   as="span"
@@ -91,7 +93,6 @@ const Showcase = () => {
           </Box>
         </MotionBox>
       </Box>
-    </>
   )
 }
 
